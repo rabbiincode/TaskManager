@@ -1,6 +1,7 @@
 <ng-container>
-  <div class="flex flex-wrap justify-center gap-12 m-auto px-6">
-    <div (dragover)="onDragOver($event)" (drop)="onDrop($event, 'opened')" class="bg-gray-300 w-[30rem] max-w-[30rem] rounded-lg border-b-4 border-r-4 border-blue-400 p-4 pb-8">
+  <p *ngIf="!loading" class="px-6 pb-12">{{notify}}</p>
+  <div *ngIf="!loading" class="flex flex-wrap justify-center gap-12 m-auto px-6">
+    <div (dragover)="onDragOver($event)" (drop)="onDrop($event, 'opened')" class="bg-gray-300 w-[30rem] max-w-[30rem] rounded-lg border-b-4 border-r-4 border-blue-400 p-4 pb-8 max-md:w-full max-md:max-w-full">
       <p class="text-blue-400 text-xl font-medium">Opened Task(s)</p>
       <p *ngIf="filterTasks('opened')?.length == 0" class="text-red-500 text-xl font-medium">No opened task(s) yet</p>
       <div (dragstart)="onDrag(task)" draggable="true" *ngFor="let task of filterTasks('opened')" class="bg-white flex flex-col gap-4 rounded-lg border-t-2 border-l-2 border-blue-400 mt-4">
@@ -15,14 +16,14 @@
         <div [ngClass]="showTask == task.taskId ? 'block' : 'hidden'">
           <div [ngClass]="task.priority == 0 ? 'bg-yellow-100' : (task.priority == 1 ? 'bg-orange-100' : 'bg-red-100')" class="px-4 py-4">
             <p>Description - {{task.desc}}</p>
-            <p>Due Date - {{task.dueDate}}</p>
+            <p>Due Date - {{formatDate(task.dueDate)}}</p>
             <p>Priority - {{priority[task.priority]}}</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div (dragover)="onDragOver($event)" (drop)="onDrop($event, 'pending')" class="bg-gray-300 w-[30rem] max-w-[30rem] rounded-lg border-b-4 border-r-4 border-yellow-400 p-4 pb-8">
+    <div (dragover)="onDragOver($event)" (drop)="onDrop($event, 'pending')" class="bg-gray-300 w-[30rem] max-w-[30rem] rounded-lg border-b-4 border-r-4 border-yellow-400 p-4 pb-8 max-md:w-full max-md:max-w-full">
       <p class="text-yellow-400 text-xl font-medium">Pending</p>
       <p *ngIf="filterTasks('pending')?.length == 0" class="text-red-500 text-xl font-medium">No pending task(s) yet</p>
       <div (dragstart)="onDrag(task)" draggable="true" *ngFor="let task of filterTasks('pending')" class="bg-white flex flex-col gap-4 rounded-lg border-t-2 border-l-2 border-yellow-400 mt-4">
@@ -37,14 +38,14 @@
         <div [ngClass]="showTask == task.taskId ? 'block' : 'hidden'">
           <div [ngClass]="task.priority == 0 ? 'bg-yellow-100' : (task.priority == 1 ? 'bg-orange-100' : 'bg-red-100')" class="px-4 py-4">
             <p>Description - {{task.desc}}</p>
-            <p>Due Date - {{task.dueDate}}</p>
+            <p>Due Date - {{formatDate(task.dueDate)}}</p>
             <p>Priority - {{priority[task.priority]}}</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div (dragover)="onDragOver($event)" (drop)="onDrop($event, 'inprogress')" class="bg-gray-300 w-[30rem] max-w-[30rem] rounded-lg border-b-4 border-r-4 border-orange-400 p-4 pb-8">
+    <div (dragover)="onDragOver($event)" (drop)="onDrop($event, 'inprogress')" class="bg-gray-300 w-[30rem] max-w-[30rem] rounded-lg border-b-4 border-r-4 border-orange-400 p-4 pb-8 max-md:w-full max-md:max-w-full">
       <p class="text-orange-400 text-xl font-medium">In Progress</p>
       <p *ngIf="filterTasks('inprogress')?.length == 0" class="text-red-500 text-xl font-medium">No task(s) in progress yet</p>
       <div (dragstart)="onDrag(task)" draggable="true" *ngFor="let task of filterTasks('inprogress')" class="bg-white flex flex-col gap-4 rounded-lg border-t-2 border-l-2 border-orange-400 mt-4">
@@ -59,14 +60,14 @@
         <div [ngClass]="showTask == task.taskId ? 'block' : 'hidden'">
           <div [ngClass]="task.priority == 0 ? 'bg-yellow-100' : (task.priority == 1 ? 'bg-orange-100' : 'bg-red-100')" class="px-4 py-4">
             <p>Description - {{task.desc}}</p>
-            <p>Due Date - {{task.dueDate}}</p>
+            <p>Due Date - {{formatDate(task.dueDate)}}</p>
             <p>Priority - {{priority[task.priority]}}</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div (dragover)="onDragOver($event)" (drop)="onDrop($event, 'completed')" class="bg-gray-300 w-[30rem] max-w-[30rem] rounded-lg border-b-4 border-r-4 border-green-400 p-4 pb-8">
+    <div (dragover)="onDragOver($event)" (drop)="onDrop($event, 'completed')" class="bg-gray-300 w-[30rem] max-w-[30rem] rounded-lg border-b-4 border-r-4 border-green-400 p-4 pb-8 max-md:w-full max-md:max-w-full">
       <p class="text-green-400 text-xl font-medium">Completed</p>
       <p *ngIf="filterTasks('completed')?.length == 0" class="text-red-500 text-xl font-medium">No completed task(s) yet</p>
       <div (dragstart)="onDrag(task)" draggable="true" *ngFor="let task of filterTasks('completed')" class="bg-white flex flex-col gap-4 rounded-lg border-t-2 border-l-2 border-green-400 mt-4">
@@ -81,12 +82,13 @@
         <div [ngClass]="showTask == task.taskId ? 'block' : 'hidden'">
           <div [ngClass]="task.priority == 0 ? 'bg-yellow-100' : (task.priority == 1 ? 'bg-orange-100' : 'bg-red-100')" class="px-4 py-4">
             <p>Description - {{task.desc}}</p>
-            <p>Due Date - {{task.dueDate}}</p>
+            <p>Due Date - {{formatDate(task.dueDate)}}</p>
             <p>Priority - {{priority[task.priority]}}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <img *ngIf="loading" src="/assets/loading.gif" alt="loading..." class="loader"/>
   <task-task *ngIf="add" [choice]="task" [editTask]="editTask" (toggle)="toggleTask()"></task-task>
 </ng-container>

@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { Task } from '../interfaces/task';
 import { Injectable } from '@angular/core';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { addDoc, collection, collectionData, doc, deleteDoc, Firestore, updateDoc, getDoc } from '@angular/fire/firestore';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { addDoc, collection, collectionData, doc, deleteDoc, Firestore, updateDo
 })
 
 export class TaskService{
-  constructor(private firestore: Firestore){}
+  constructor(private firestore: Firestore, private storage: AngularFireStorage){}
   taskRef = collection(this.firestore, 'tasks')
 
   getAllTasks = (): Observable<any[]> => {

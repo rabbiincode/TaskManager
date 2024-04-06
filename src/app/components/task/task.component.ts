@@ -1,12 +1,15 @@
+import { Router } from '@angular/router';
 import { Task } from '../../interfaces/task';
 import { CommonModule } from '@angular/common';
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
+import { AuthService } from '../../services/auth.service';
 import { TaskService } from '../../services/task.service';
 import { MatSelectModule } from '@angular/material/select';
 import { AlertService } from '../../services/alert.service';
 import { MatNativeDateModule } from '@angular/material/core';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { UtilitiesService } from '../../services/utilities.service';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -20,8 +23,9 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validator
 })
 
 export class TaskComponent{
-  constructor(private alert: AlertService, private formBuilder: FormBuilder, private taskService: TaskService){}
+  constructor(private alert: AlertService, private auth: AuthService, private formBuilder: FormBuilder, private router: Router, private taskService: TaskService, private utils: UtilitiesService){}
   loading = false
+  editDate = true
   greet = 'Good day!'
   currentTime!: string
   taskForm!: FormGroup
@@ -36,21 +40,27 @@ export class TaskComponent{
   ]
 
   ngOnInit() {
+    this.auth.isLogin$.subscribe((login) => {
+      !login && this.router.navigate(['/login'])
+    })
     this.taskForm = this.formBuilder.group({
-      title: ['', [Validators.required]],
       desc: ['', [Validators.required]],
-      dueDate: ['', [Validators.required, this.dateValidator]],
-      status: ['opened', [Validators.required]],
+      title: ['', [Validators.required]],
       taskId: ['id', [Validators.required]],
-      priority: ['', [Validators.required]]
+      priority: ['', [Validators.required]],
+      failed: ['false', [Validators.required]],
+      status: ['opened', [Validators.required]],
+      username: [this.auth.username, [Validators.required]],
+      dueDate: ['', [Validators.required, this.dateValidator]],
     })
     if (this.choice == 'edit'){
-      this.taskForm.patchValue({
-        title: this.editTask.title, desc: this.editTask.desc, dueDate: new Date(this.editTask.dueDate), status: this.editTask.status,
-        taskId: this.editTask.taskId, priority: this.editTask.priority
+      this.editDate = false
+      this.taskForm.patchValue({title: this.editTask.title, desc: this.editTask.desc,
+        status: this.editTask.status, taskId: this.editTask.taskId, username: this.editTask.username, failed: this.editTask.failed, priority: this.editTask.priority
       })
     }
   }
+  // dueDate: new Date(this.convertDateToString(this.editTask.dueDate)),
 
   // Getter for easy access to form controls
   get formControls() {
@@ -60,7 +70,7 @@ export class TaskComponent{
   // Custom validator function to check if the date is less than the current date
   dateValidator = (control: AbstractControl) => {
     const inputValue = control.value
-    if (inputValue && this.validateDate(inputValue)) {
+    if (inputValue && this.validateDate(inputValue)){
       return { 'invalidDate': true }
     }
     return null
@@ -72,10 +82,21 @@ export class TaskComponent{
     return inputDateObject < currentDate
   }
 
+  convertDateToString = (date: Date) => {
+    const originalDate = new Date(date)
+    const formattedString = `${originalDate.getMonth() + 1}/${originalDate.getDate()}/${originalDate.getFullYear()}`
+    return formattedString
+  }
+
+  convertToDate = (dateString: string) => {
+    const [month, day, year] = dateString.split('/');
+    const convertedDate = new Date(`${month}/${day}/${year} 00:00:00`)
+    return convertedDate
+  }
+
   toggleTask = () => this.toggle.emit(false)
   select = () => this.choice == 'add' ? this.addTask() : this.editTask1()
   addTask = () => {
-    console.log(this.taskForm.value)
     this.taskService.createTask(this.taskForm.value).then(() => {
       this.toggleTask()
       this.success()
@@ -88,12 +109,14 @@ export class TaskComponent{
   editTask1 = () => {
     this.taskService.updateTask(this.taskForm.value.taskId, this.taskForm.value).then(() => {
       this.toggleTask()
+      console.log(this.taskForm.value)
       this.success()
     }, () => {
       // Failed
       this.failed()
     })
   }
-  success = () => this.alert.openSuccessDialog('1', '1')
-  failed = () => this.alert.openFailDialog('1', '1')
+  success = () => this.alert.openSuccessDialog('0', '0')
+  failed = () => this.alert.openFailDialog('0', '0')
+  formatDate = (date: Date) => this.utils.formatDate(date)
 }

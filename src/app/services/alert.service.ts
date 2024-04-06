@@ -42,7 +42,6 @@ export class AlertService{
   deleteTask = () => {
     this.taskService.deleteTask(this.taskId).then(() => {
       this.openSuccessDialog('0ms', '0ms')
-      // Success
     }, () => {
       // Failed
       this.openFailDialog('0ms', '0ms')

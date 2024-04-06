@@ -1,30 +1,27 @@
-import { Task } from '../../interfaces/task';
-import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { Component, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { TaskComponent } from '../task/task.component';
+import { AuthService } from '../../services/auth.service';
 import { CardsComponent } from '../cards/cards.component';
 import { FooterComponent } from '../footer/footer.component';
 import { HeaderComponent } from '../header/header.component';
-import { AllTasksComponent } from '../all-tasks/all-tasks.component';
 
 @Component({
-  selector: 'task-home',
+  selector: 'task-user',
   standalone: true,
-  imports: [AllTasksComponent, FooterComponent, HeaderComponent, TaskComponent, CommonModule, MatIconModule, RouterLink],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  imports: [CardsComponent, FooterComponent, HeaderComponent, MatIconModule, RouterLink],
+  templateUrl: './user.component.html',
+  styleUrl: './user.component.scss'
 })
 
-export class HomeComponent{
-  add = false
-  loading = false
-  allTasks!: Task[]
+export class UserComponent{
+  constructor(private auth: AuthService, private router: Router){}
+  username!: string
   greet = 'Good day!'
   @ViewChild(CardsComponent) cardsComponent!: CardsComponent
 
   ngOnInit() {
+    this.username = this.auth.getUsername(this.auth.username)
     this.updateGreetingAndTime() // Initial update
   }
 
@@ -33,5 +30,5 @@ export class HomeComponent{
     const hourOfDay = now.getHours()
     hourOfDay < 12 ? this.greet = 'Good morning!' : hourOfDay < 18 ? this.greet = 'Good afternoon!' : this.greet = 'Good evening!'
   }
-  addTask = () => this.add = !this.add
+  setTask = (choice: string) => this.cardsComponent.setTask(choice)
 }
