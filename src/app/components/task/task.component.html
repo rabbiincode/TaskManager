@@ -12,12 +12,6 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Description</mat-label>
-      <textarea formControlName="desc" matInput placeholder="Enter task description" rows="3"></textarea>
-      <mat-error *ngIf="taskForm.value.desc == ''">Task description required</mat-error>
-    </mat-form-field>
-
-    <mat-form-field>
       <mat-label>Select task due date</mat-label>
       <mat-hint>MM/DD/YYYY</mat-hint>
       <input formControlName="dueDate" matInput [matDatepicker]="picker">
@@ -25,6 +19,19 @@
       <mat-datepicker #picker></mat-datepicker>
       <mat-error *ngIf="taskForm.value.dueDate == ''">Task Due Date required</mat-error>
       <mat-error *ngIf="formControls['dueDate'].hasError('invalidDate')">Invalid date</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Task Priority</mat-label>
+      <mat-select formControlName="priority">
+        <mat-option *ngFor="let priority of taskPriority" [value]="priority.value">{{priority.viewValue}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea formControlName="desc" matInput placeholder="Enter task description" rows="3"></textarea>
+      <mat-error *ngIf="taskForm.value.desc == ''">Task description required</mat-error>
     </mat-form-field>
 
     <button *ngIf="choice == 'add'" type='submit' [disabled]="taskForm.invalid" class="bg-green-200 h-14 rounded-lg">
