@@ -1,6 +1,6 @@
 <div class="fixed h-screen top-0 right-0 left-0 !px-6">
   <div class="fixed h-screen top-0 right-0 left-0 bg-slate-300/40 cursor-pointer p-6" (click)="toggleTask()"></div>
-
+ 
   <form [formGroup]="taskForm" (submit)="select()" class="max-w-3xl w-[90%] bg-slate-300 flex flex-col gap-8 rounded-lg z-10 p-8 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
     <span *ngIf="choice == 'add'" class="text-green-400 text-center text-2xl font-medium">Create New Task</span>
     <span *ngIf="choice == 'edit'" class="text-orange-400 text-center text-2xl font-medium">Edit Task</span>
@@ -11,12 +11,7 @@
       <mat-error *ngIf="taskForm.value.title == ''">Task title required</mat-error>
     </mat-form-field>
 
-    <div *ngIf="choice == 'edit'" class="text-xl font-medium">
-      Due Date: <span class="text-red-400 text-xl font-medium">{{taskForm.value.dueDate ? taskForm.value.dueDate : formatDate(editTask.dueDate)}} - </span>
-      <span (click)="editDate = !editDate" class="text-orange-500 underline cursor-pointer hover:opacity-80">Edit</span>
-    </div>
-
-    <mat-form-field *ngIf="editDate">
+    <mat-form-field>
       <mat-label>Select task due date</mat-label>
       <mat-hint>MM/DD/YYYY</mat-hint>
       <input formControlName="dueDate" matInput [matDatepicker]="picker">
@@ -43,7 +38,7 @@
       <span *ngIf="!loading">Add task</span>
       <span *ngIf="loading" class="load"></span>
     </button>
-    <button *ngIf="choice == 'edit'" type='submit' [disabled]="taskForm.value.title == editTask.title && taskForm.value.desc == editTask.desc && taskForm.value.dueDate == editTask.dueDate || taskForm.invalid" class="bg-green-200 h-14 rounded-lg">
+    <button *ngIf="choice == 'edit'" type='submit' [disabled]="taskForm.value.title == editTask.title && taskForm.value.desc == editTask.desc && taskForm.value.dueDate == editTask.dueDate && taskForm.value.priority == editTask.priority || taskForm.invalid" class="bg-green-200 h-14 rounded-lg">
       <span *ngIf="!loading">Edit task</span>
       <span *ngIf="loading" class="load"></span>
     </button>

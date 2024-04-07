@@ -23,9 +23,8 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validator
 })
 
 export class TaskComponent{
-  constructor(private alert: AlertService, private auth: AuthService, private formBuilder: FormBuilder, private router: Router, private taskService: TaskService, private utils: UtilitiesService){}
+  constructor(private alert: AlertService, private auth: AuthService, private formBuilder: FormBuilder, private router: Router, public taskService: TaskService, private utils: UtilitiesService){}
   loading = false
-  editDate = true
   greet = 'Good day!'
   currentTime!: string
   taskForm!: FormGroup
@@ -54,13 +53,11 @@ export class TaskComponent{
       dueDate: ['', [Validators.required, this.dateValidator]],
     })
     if (this.choice == 'edit'){
-      this.editDate = false
-      this.taskForm.patchValue({title: this.editTask.title, desc: this.editTask.desc,
+      this.taskForm.patchValue({title: this.editTask.title, desc: this.editTask.desc, dueDate: new Date(this.convertDateToString(this.editTask.dueDate)),
         status: this.editTask.status, taskId: this.editTask.taskId, username: this.editTask.username, failed: this.editTask.failed, priority: this.editTask.priority
       })
     }
   }
-  // dueDate: new Date(this.convertDateToString(this.editTask.dueDate)),
 
   // Getter for easy access to form controls
   get formControls() {
@@ -96,8 +93,8 @@ export class TaskComponent{
 
   toggleTask = () => this.toggle.emit(false)
   select = () => this.choice == 'add' ? this.addTask() : this.editTask1()
-  addTask = () => {
-    this.taskService.createTask(this.taskForm.value).then(() => {
+  addTask = async () => {
+    await this.taskService.createTask(this.taskForm.value).then(() => {
       this.toggleTask()
       this.success()
     }, () => {
@@ -106,8 +103,8 @@ export class TaskComponent{
     })
   }
 
-  editTask1 = () => {
-    this.taskService.updateTask(this.taskForm.value.taskId, this.taskForm.value).then(() => {
+  editTask1 = async () => {
+    await this.taskService.updateTask(this.taskForm.value.taskId, this.taskForm.value).then(() => {
       this.toggleTask()
       console.log(this.taskForm.value)
       this.success()

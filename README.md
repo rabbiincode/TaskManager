@@ -4,10 +4,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 # Project Title
 
-Task Tracker
-
-
-
+Task Tracker Application
 
 ## Tech Stack
 
@@ -21,26 +18,31 @@ Features
 - Add, Edit, and Delete Tasks
 - Fully Responsive in all devices
 - Drag and drop to update task's progress
+- Filter task based on Task Priority and Status
+- Local storage for persisting login credentials
 - Notifications on successful amd failed operations
+- Unit test for task component
 
 ## Documentation
-Project Link to be released soon or you can run the project locally for full interaction
-
+Project Preview Link - https://task-manager-zeta-teal.vercel.app/
 
 ## Installation
 To Run The Project Locally -
 
 Your device should be compatible with Angular 17 and above
 
-Clone the project with the projects Github link - https://github.com/rabbiincode/Task-Tracker
+Clone the project with the projects Github link - https://github.com/rabbiincode/TaskManager
 
 - Open your Terminal
 
 Run the following command -
+- npm install - to install all project dependencies
 
- - npm install - to install all project dependencies
+- ng serve --o - to open the project on localhost
 
- - ng serve --o - to open the project on localhost
+Login and test the application -
+- Username - johndoe@gmail.com
+- Password - 12345@Aa
 
 ## Authors
 - [@rabbiincode](https://github.com/rabbiincode)
